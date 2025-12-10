@@ -35,7 +35,7 @@ namespace todoapp_backend.Tests.Controllers
                 .ReturnsAsync(tasks);
 
             // Act
-            var result = await _controller.GetRecentTasks();
+            var result = await _controller.GetAllTasks();
 
             // Assert
             Assert.NotNull(result);
