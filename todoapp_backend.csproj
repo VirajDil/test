@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <Compile Remove="todoapp_backend.Tests\**\*.cs" />
+    <Compile Remove="todoapp_backend.IntegrationTests\**\*.cs" />
   </ItemGroup>
 
   <ItemGroup>

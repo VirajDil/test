@@ -70,9 +70,24 @@ public class TaskService : ITaskService
         return MapToDto(task);
     }
 
+    public async System.Threading.Tasks.Task<IEnumerable<TaskDto>> GetAllTasksAsync()
+    {
+        var tasks = await _taskRepository.GetAllTasksAsync();
+        return tasks.Select(MapToDto);
+    }
+
     public async Task<TaskDto> MarkTaskAsCompletedAsync(Guid id)
     {
         return await UpdateTaskAsync(id, new UpdateTaskDto { IsCompleted = true });
+    }
+
+    public async System.Threading.Tasks.Task DeleteTaskAsync(Guid id)
+    {
+        var task = await _taskRepository.GetTaskByIdAsync(id);
+        if (task == null)
+            throw new KeyNotFoundException($"Task with id {id} not found");
+
+        await _taskRepository.DeleteTaskAsync(id);
     }
 
     private static TaskDto MapToDto(Models.Task task)

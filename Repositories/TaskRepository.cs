@@ -21,6 +21,11 @@ public class TaskRepository : ITaskRepository
             .ToListAsync();
     }
 
+    public async System.Threading.Tasks.Task<IEnumerable<Models.Task>> GetAllTasksAsync()
+    {
+        return await _context.Tasks.ToListAsync();
+    }
+
     public async System.Threading.Tasks.Task<Models.Task?> GetTaskByIdAsync(Guid id)
     {
         return await _context.Tasks.FindAsync(id);
@@ -46,5 +51,15 @@ public class TaskRepository : ITaskRepository
         task.UpdatedAt = DateTime.UtcNow;
         _context.Tasks.Update(task);
         return await System.Threading.Tasks.Task.FromResult(task);
+    }
+
+    public async System.Threading.Tasks.Task DeleteTaskAsync(Guid id)
+    {
+        var task = await _context.Tasks.FindAsync(id);
+        if (task != null)
+        {
+            _context.Tasks.Remove(task);
+            await _context.SaveChangesAsync();
+        }
     }
 }

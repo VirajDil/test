@@ -5,7 +5,7 @@ using todoapp_backend.ITaskServices;
 namespace todoapp_backend.Controllers;
 
 [ApiController]
-[Route("api/v1/[controller]/[action]")]
+[Route("api/[controller]")]
 public class TasksController : ControllerBase
 {
     private readonly ITaskService _taskService;
@@ -16,14 +16,11 @@ public class TasksController : ControllerBase
     }
     
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<TaskDto>>> GetRecentTasks([FromQuery] int count = 5)
+    public async Task<ActionResult<IEnumerable<TaskDto>>> GetAllTasks()
     {
-        if (count <= 0 || count > 100)
-            return BadRequest("Count must be between 1 and 100");
-
         try
         {
-            var tasks = await _taskService.GetRecentTasksAsync(count);
+            var tasks = await _taskService.GetRecentTasksAsync(100);
             return Ok(tasks);
         }
         catch (Exception ex)
@@ -95,6 +92,24 @@ public class TasksController : ControllerBase
         {
             var task = await _taskService.MarkTaskAsCompletedAsync(id);
             return Ok(task);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { error = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { error = ex.Message });
+        }
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteTask(Guid id)
+    {
+        try
+        {
+            await _taskService.DeleteTaskAsync(id);
+            return NoContent();
         }
         catch (KeyNotFoundException ex)
         {
