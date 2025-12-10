@@ -1,0 +1,45 @@
+# Frontend dependencies and build files
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+frontend/.env.local
+frontend/.env.*.local
+
+# Frontend IDE files
+frontend/.vscode/
+frontend/.idea/
+
+# Backend build and object files
+backend/bin/
+backend/obj/
+backend/.vs/
+backend/.vscode/
+backend/.idea/
+
+# Backend user and cache files
+backend/*.user
+backend/.user
+backend/.DS_Store
+backend/appsettings.*.json
+backend/.nuget/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.code-workspace
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# General temporary files
+*.tmp
+*.log
+*.cache
+
+# Environment files
+.env
+.env.local

@@ -1,0 +1,60 @@
+services:
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: todoapp_mssql
+    environment:
+      SA_PASSWORD: "SqlPass@123456"
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: "Developer"
+    ports:
+      - "1433:1433"
+    volumes:
+      - mssql_data:/var/opt/mssql
+    networks:
+      - todoapp_network
+    healthcheck:
+      test: ["CMD", "/bin/bash", "-c", "echo quit | /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P SqlPass@123456 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+    restart: unless-stopped
+
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: todoapp_api_new
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Production"
+      ASPNETCORE_URLS: "http://+:8080"
+      ConnectionStrings__DefaultConnection: "Server=mssql,1433;Database=TodoDb;User Id=sa;Password=SqlPass@123456;Encrypt=false;Connection Timeout=30;"
+      SA_PASSWORD: "SqlPass@123456"
+    ports:
+      - "5000:8080"
+    depends_on:
+      - mssql
+    networks:
+      - todoapp_network
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: todoapp_frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - api
+    networks:
+      - todoapp_network
+    restart: unless-stopped
+
+volumes:
+  mssql_data:
+    driver: local
+
+networks:
+  todoapp_network:
+    driver: bridge
